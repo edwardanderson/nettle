@@ -4,6 +4,18 @@ Nettle (Nested Triple Trees Language) is a compact, human-friendly concrete synt
 
 Refer to the [Nettle 0.1.0](docs/specification.md) specification.
 
+## Features
+
+- Significant whitespace for readability
+- Simplified syntax reduces the number of special characters
+- `include` directive for modular composition
+- `shapes` directive for validation hinting
+- `alias` directive for identity management
+- `@inverse` predicate annotation for materialising a triple in reverse
+- Named graphs
+- Ordered lists (collections)
+- Quoted triples (reification)
+
 ## Example
 
 ```nettle
@@ -12,7 +24,7 @@ prefix owl http://www.w3.org/2002/07/owl#
 prefix schema https://schema.org/
 prefix wd http://www.wikidata.org/entity/
 alias Brian wd:Q204943
-alais date http://www.w3.org/2001/XMLSchema#date
+alias date http://www.w3.org/2001/XMLSchema#date
 
 Mick
   a
@@ -55,14 +67,6 @@ Mick
 
 <https://viaf.org/viaf/102199951> schema:birthDate "1941-06-02"^^xsd:date .
 ```
-
-## Features
-
-- Significant whitespace for readability
-- Simplified syntax removes many special characters
-- `include` directive for modular composition
-- `shapes` directive for validation hinting
-- `@inverse` predicate annotation for materialising a triple in reverse
 
 ## Licence
 
