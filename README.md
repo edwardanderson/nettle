@@ -1,85 +1,69 @@
 # Nettle
 
-Nettle (Nested Triple Trees Language) is a concrete RDF syntax that organises triples with hierarchical indentation.
+Nettle (Nested Triple Trees Language) is a compact, human-friendly concrete syntax for RDF. It expresses triples as indented trees so that related resources may be visually grouped.
 
-Refer to the [Specification](docs/specification.md).
+Refer to the [Nettle 0.1.0](docs/specification.md) specification.
 
 ## Example
 
 ```nettle
-language en
 base http://example.org/
-prefix ex http://example.org/
+prefix owl http://www.w3.org/2002/07/owl#
 prefix schema https://schema.org/
 prefix wd http://www.wikidata.org/entity/
-prefix xsd http://www.w3.org/2001/XMLSchema#
-alias knows <http://xmlns.com/foaf/0.1/knows>
-alias Keith wd:Q189599
+alias Brian wd:Q204943
+alais date http://www.w3.org/2001/XMLSchema#date
 
 Mick
   a
     schema:Person
   schema:name
-    "Sir Michael Philip Jagger"
-    "ミック・ジャガー"@jp
-  schema:birthDate
-    "1943-07-26" xsd:date
+    "Sir Michael Philip Jagger"@en
   knows
     Keith
-      schema:name
-        "Keith"
-  schema:description
-    "Sir Michael Philip Jagger (born 26 July 1943) is an English musician, songwriter, and film producer.
-    He is the lead singer and one of the founder members of the Rolling Stones."
-  ex:educatedAt (
-    [Wentworth]
-      schema:name
-        "Wentworth Primary School"
-    [Dartford]
-      schema:name
-        "Dartford Grammar School"
-  )
-
-g1 {
-  Dartford
-    schema:containsPlace
-      [Wentworth]
-      [Dartford]
-}
-
-<<
-  Mick
-    schema:birthPlace
-      Dartford
->>
-  ex:accordingTo
-    https://en.wikipedia.org/w/index.php?title=Mick_Jagger&oldid=1325054665
+      schema:birthDate
+        "1943-12-18" date
+    Brian
+      schema:birthDate
+        "1942-02-28" date
+    [Bill]
+      schema:birthDate
+        "1936-10-24" date
+    https://viaf.org/viaf/102199951
+      schema:birthDate
+        "1941-06-02" date
+  owl:sameAs
+    wd:Q128121
 ```
 
-```trig
-@version "1.2" .
+```turtle
 @prefix ex: <http://example.org/> .
-@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix schema: <https://schema.org/> .
-@prefix wd: <http://www.wikidata.org/entity/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 <http://example.org/Mick> a schema:Person ;
-    schema:name "Sir Michael Philip Jagger"@en , "ミック・ジャガー"@jp ;
-    schema:birthDate "1943-07-26"^^xsd:date ;
-    foaf:knows wd:Q189599 ;
-    schema:description "Sir Michael Philip Jagger (born 26 July 1943) is an English musician, songwriter, and film producer.\nHe is the lead singer and one of the founder members of the Rolling Stones."@en ;
-    ex:educatedAt ( _:b0 , _:b1 ) .
+    schema:name "Sir Michael Philip Jagger"@en ;
+    ex:knows <http://example.org/Keith> , <http://www.wikidata.org/entity/Q204943> , [
+      schema:birthDate "1936-10-24"^^xsd:date
+    ] , <https://viaf.org/viaf/102199951> ;
+    owl:sameAs <http://www.wikidata.org/entity/Q128121> .
 
-_:b0 schema:name "Wentworth Primary School"@en .
+<http://www.wikidata.org/entity/Q204943> schema:birthDate "1942-02-28"^^xsd:date .
 
-_:b1 schema:name "Dartford Grammar School"@en .
+<http://example.org/Keith> schema:birthDate "1943-12-18"^^xsd:date .
 
-wd:Q189599 schema:name "Keith"@en .
-
-<http://example.org/g1> {
-  <http://example.org/Dartford> schema:containsPlace _:b0 , _:b1 .
-}
-
-<< <http://example.org/Mick> schema:birthPlace <http://example.org/Dartford> >> ex:accordingTo <https://en.wikipedia.org/w/index.php?title=Mick_Jagger&oldid=1325054665> .
+<https://viaf.org/viaf/102199951> schema:birthDate "1941-06-02"^^xsd:date .
 ```
+
+## Features
+
+- Significant whitespace for readability
+- Simplified syntax removes many special characters
+- `include` directive for modular composition
+- `shapes` directive for validation hinting
+- `@inverse` predicate annotation for materialising a triple in reverse
+
+## Licence
+
+`CC-BY-4.0`

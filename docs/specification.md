@@ -5,34 +5,43 @@ date: 2025-12-31
 
 # Nettle 0.1.0
 
-**Status:** Draft
+> [!CAUTION]
+> Status: Draft
 
----
+Nettle (Nested Triple Trees Language) is a compact, human-friendly concrete syntax for RDF. It expresses triples as indented trees so that related resources may be visually grouped.
 
 - [Nettle 0.1.0](#nettle-010)
-  - [Simple Triples](#simple-triples)
-  - [IRIs](#iris)
-  - [Blank Nodes](#blank-nodes)
-  - [Predicate Lists](#predicate-lists)
-  - [Object Lists](#object-lists)
+  - [Basics](#basics)
+  - [Identifiers](#identifiers)
+    - [Blank nodes](#blank-nodes)
+  - [Predicate lists](#predicate-lists)
+  - [Object lists](#object-lists)
+  - [Literals](#literals)
+    - [Language-tagged strings](#language-tagged-strings)
+    - [Datatyped strings](#datatyped-strings)
   - [Collections](#collections)
-  - [Named Graphs](#named-graphs)
-  - [Quoted Triples](#quoted-triples)
+  - [Named graphs](#named-graphs)
+  - [Quoted triples](#quoted-triples)
   - [Comments](#comments)
   - [Directives](#directives)
-    - [Prologue](#prologue)
+    - [Prologue directives](#prologue-directives)
       - [alias](#alias)
       - [base](#base)
       - [include](#include)
       - [language](#language)
       - [prefix](#prefix)
       - [shapes](#shapes)
-    - [Tree](#tree)
-      - [`@inverse`](#inverse)
+    - [Resource directives](#resource-directives)
+      - [@inverse](#inverse)
+  - [Notes](#notes)
 
-## Simple Triples
+## Basics
 
-The simplest triple statement is a tree of (subject, predicate, object) terms separated by significant whitespace. Terms may be [IRIs](#iris), CURIEs, [aliases](#alias), or [blank nodes](#blank-nodes).
+- Triples are written as trees: a subject on one line, one or more predicates indented under it, and one or more objects indented under each predicate
+- Terms can be IRIs, prefixed names, aliases, or blank nodes
+- Directives (prefix, base, alias, etc.) affect parsing
+
+A simple triple:
 
 ```nettle
 http://example.org/mick
@@ -40,36 +49,49 @@ http://example.org/mick
     http://example.org/keith
 ```
 
-## IRIs
+## Identifiers
 
-IRIs may be written as relative or absolute IRIs, or as prefixed names.
+Use absolute or relative IRIs, prefixed names (CURIEs), or aliases:
 
 ```nettle
 base http://example.org/
 prefix foaf http://xmlns.com/foaf/0.1/
+prefix viaf http://viaf.org/viaf/
+alias brian http://www.wikidata.org/entity/Q204943
+alias bill viaf:54334218
 
-mick
-  foaf:knows
-    http://example.org/keith
+http://example.org/mick # absolute IRI
+  foaf:knows            # CURIE
+    keith               # relative IRI
+    brian               # alias
+    bill                # alias
 ```
 
-## Blank Nodes
+See also: [base](#base), [prefix](#prefix), [alias](#alias), [comments](#comments).
 
-Blank nodes are indicated by `[]`. A label may be given inside the brackets so that the same node can be referred to in the current document. Blank node labels are not preserved across serialisation.
+### Blank nodes
+
+Square brackets denote a blank node. You may optionally give a local label to refer to the same blank node within the document. Unlabelled blank nodes are always unique.
 
 ```nettle
 base http://example.org/
+prefix schema https://schema.org/
 
 mick
-  sibling
-    [Chris]
+  knows
+    [Keith]            # labelled blank node
       schema:birthDate
-        "1947-12-19"
+        "1943-12-18"
+    []                 # unlabelled blank node
+      schema:birthDate
+        "1942-02-28"
 ```
 
-## Predicate Lists
+See also: [base](#base), [prefix](#prefix), [literals](#literals), [comments](#comments).
 
-These two examples are equivalent ways of writing the triples about Mick.
+## Predicate lists
+
+Multiple predicates for the same subject may be grouped at the same level of indentation:
 
 ```nettle
 http://example.org/mick
@@ -79,36 +101,45 @@ http://example.org/mick
     "Mick"
 ```
 
+## Object lists
+
+A predicate may have multiple objects. Each object is on its own indented line.
+
 ```nettle
 http://example.org/mick
   http://xmlns.com/foaf/0.1/knows
     http://example.org/keith
-http://example.org/mick
-  http://xmlns.com/foaf/0.1/name
-    "Mick"
+    http://example.org/brian
 ```
 
-## Object Lists
+## Literals
+
+Literals must be wrapped in `"` quotation marks.
+
+### Language-tagged strings
+
+Provide a BCP-47 tag to specify the language of the string. Language tags override the [default language](#language).
 
 ```nettle
 http://example.org/mick
   http://xmlns.com/foaf/0.1/name
-    "Mick"
+    "Mick"@en
     "ミック・ジャガー"@jp
 ```
 
+### Datatyped strings
+
+Specify the datatype of a literal with an IRI, CURIE or [alias](#alias).
+
 ```nettle
 http://example.org/mick
-  http://xmlns.com/foaf/0.1/name
-    "mick"
-http://example.org/mick
-  http://xmlns.com/foaf/0.1/name
-    "ミック・ジャガー"@jp
+  https://schema.org/birthDate
+    "1943-07-26" http://www.w3.org/2001/XMLSchema#date
 ```
 
 ## Collections
 
-Sequences of resources may be declared using lists of terms inside `()` in the subject or object position of a triple. Preceding or following predicates my be written on the same line as the opening or closing bracket.
+Ordered lists are written using parentheses. They may appear as subject or object. The preceding or following predicate may share the same line as the list's opening or closing bracket.
 
 ```nettle
 base http://example.org/
@@ -117,23 +148,14 @@ mick
   educatedAt (
     Wentworth_Primary_School
     Dartford_Grammar_School
-    London_School_of_Economics
   )
 ```
 
-```nettle
-base http://example.org/
+See also: [identifiers](#identifiers), [base](#base).
 
-(
-  Wentworth_Primary_School
-  Dartford_Grammar_School
-  London_School_of_Economics
-)
-  educated
-    mick
-```
+## Named graphs
 
-## Named Graphs
+Triples collected as separate graphs are wrapped in curly braces. A graph name may be given as an identifier or a blank node. Triples outside of the curly braces or inside unlabelled graphs are part of the default graph.
 
 ```nettle
 base http://example.org/
@@ -145,7 +167,11 @@ g1 {
 }
 ```
 
-## Quoted Triples
+See also: [identifiers](#identifiers), [blank nodes](#blank-nodes), [base](#base).
+
+## Quoted triples
+
+Quoted triples (reified/annotated triples) are written between `<<` and `>>`.
 
 ```nettle
 base http://example.org/
@@ -159,83 +185,81 @@ base http://example.org/
     https://en.wikipedia.org/w/index.php?title=Mick_Jagger&oldid=1325054665
 ```
 
+> [!NOTE]
+> Reified triples are a feature of RDF 1.2 and may be ignored by parsers until that specification is finalised.
+
+See also: [identifiers](#identifiers), [base](#base).
+
 ## Comments
 
-Comments must be prefixed with `#`.
-
-```
-# This is a comment.
-```
+Lines starting with `#` are comments and ignored.
 
 ## Directives
 
 Directives are processed in document order.
 
-### Prologue
+### Prologue directives
 
 #### alias
 
-The `alias` directive declares a local name for an IRI. Aliases propagate transitively when the [`include`](#include) directive is used. If the same alias is declared multiple times, the later declaration overrides earlier ones.
+Give a short local name to an IRI or CURIE; aliases propagate when files are included.
 
-```nettle
-prefix wd http://www.wikidata.org/entity/
-alias mick wd:Q128121
-alias knows <http://xmlns.com/foaf/0.1/knows>
-alias keith wd:Q189599
+`alias NAME IRI|CURIE`
 
-mick
-  knows
-    keith
-```
+See also: [include](#include); [example](../examples/alias.md).
 
 #### base
 
-The `base` directive sets a base IRI against which relative IRIs are resolved.
+Set the base namespace for resolving relative IRIs.
+
+`base IRI`
+
+See also: [example](../examples/base.md).
 
 #### include
 
-The `include` directive imports triples, prefixes, base IRIs, and aliases from another Nettle or RDF document, merging them into the current dataset. `include` directives are processed before subsequent triples in the current document.
+Import triples, prefixes, base and aliases from another document before continuing.
 
-```nettle
-include http://exmaple.org/data/example.ttl
-```
+`include IRI`
 
-Behaviour when `include` directives form cycles is implementation-defined.
+See also: [example](../examples/include.md).
 
 #### language
 
-The `language` directive sets a default language for all literals which do not have a specific language tag or datatype.
+Default language tag for plain literals without explicit language or datatype.
+
+`language TAG`
+
+See also: [example](../examples/language.md).
 
 #### prefix
 
-The `prefix` directive defines a label for a namespace.
+Declare a namespace prefix.
 
-```nettle
-prefix ex http://example.org
-
-ex:mick
-  a
-    ex:person
-```
+`prefix NAME IRI`
 
 #### shapes
 
-The `shapes` directive identifies a SHACL shape that may be used to validate the current graph. The directive is advisory and does not affect RDF graph construction.
+Optional advisory pointer to a SHACL shapes file which a parser may use to validate the current document.
+
+`shapes IRI`
+
+### Resource directives
+
+#### @inverse
+
+Annotate a predicate to flip the subject/object direction for that occurrence only.
 
 ```nettle
-shapes http://example.org/shapes/example.ttl
-```
-
-### Tree
-
-#### `@inverse`
-
-The `@inverse` directive is an in-line predicate keyword for reversing the direction of the annotated predicate in the current triple. The directive does not affect the behaviour of other predicates nor unannotated instances of the same predicate.
-
-```nettle
-base http://example.org/
-
-mick
-  knows @inverse
+guitar
+  plays @inverse
     keith
 ```
+
+`PREDICATE "@inverse"`
+
+## Notes
+
+- Blank node labels are local to the document and not preserved across serialisation
+- The `include` directive merges content; behaviour on cycles is implementation-defined
+- This specification focuses on readable syntax and intent. For edge cases and serialisation details consult implementation notes or tests
