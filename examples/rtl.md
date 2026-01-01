@@ -10,13 +10,9 @@ alias يعرف foaf:knows
 ```
 
 <pre dir="rtl">
-<code dir="rtl">
-include path/to/example.ntl
-
 ميك
   يعرف
     كيث
-</code>
 </pre>
 
 
