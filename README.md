@@ -2,7 +2,7 @@
 
 Nettle (Nested Triple Trees Language) is a compact, human-friendly concrete syntax for RDF. It expresses triples as indented trees so that related resources may be visually grouped.
 
-Refer to the [Nettle 0.1.0](docs/specification.md) specification.
+Refer to the [Nettle 0.2.0](docs/specification.md) specification.
 
 ## Features
 
