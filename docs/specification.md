@@ -36,7 +36,8 @@ Nettle (Nested Triple Trees Language) is a compact, human-friendly syntax for au
       - [language](#language)
       - [prefix](#prefix)
       - [prefixes](#prefixes)
-      - [shapes](#shapes)
+    - [shape](#shape)
+    - [shapes](#shapes)
     - [Resource directives](#resource-directives)
       - [@inverse](#inverse)
   - [Notes](#notes)
@@ -317,11 +318,21 @@ prefixes
   NAME IRI
 ```
 
-#### shapes
+### shape
 
 Optional advisory pointer to a SHACL shapes file which a parser may use to validate the current document.
 
-`shapes IRI`
+`shape IRI`
+
+### shapes
+
+Multiple shapes may be given as a block.
+
+```
+shapes
+  IRI
+  IRI
+```
 
 ### Resource directives
 
