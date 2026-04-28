@@ -20,6 +20,7 @@ Refer to the [Nettle 0.2.0](docs/specification.md) specification.
 
 ```nettle
 base http://example.org/
+
 prefixes
   owl http://www.w3.org/2002/07/owl#
   schema https://schema.org/
