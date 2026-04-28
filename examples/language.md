@@ -4,6 +4,7 @@
 ```nettle
 language en
 base http://example.org/
+prefix schema https://schema.org/
 
 Mick
   schema:name

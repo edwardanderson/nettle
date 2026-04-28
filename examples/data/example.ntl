@@ -1,0 +1,33 @@
+base http://example.org/
+
+prefixes
+  owl http://www.w3.org/2002/07/owl#
+  schema https://schema.org/
+  wd http://www.wikidata.org/entity/
+
+aliases
+  Brian wd:Q204943
+  date http://www.w3.org/2001/XMLSchema#date
+
+Mick
+  a
+    schema:Person
+  schema:name
+    "Sir Michael Philip Jagger"@en
+  schema:description
+    > **Sir Michael Philip Jagger** is an English musician, songwriter, and film producer.
+  knows
+    Keith
+      schema:birthDate
+        "1943-12-18" date
+    Brian
+      schema:birthDate
+        "1942-02-28" date
+    [Bill]
+      schema:birthDate
+        "1936-10-24" date
+    https://viaf.org/viaf/102199951
+      schema:birthDate
+        "1941-06-02" date
+  owl:sameAs
+    wd:Q128121
