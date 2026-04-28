@@ -292,9 +292,12 @@ includes
 
 #### language
 
-Default language tag for plain literals without explicit language or datatype, and for Markdown content.
+Default language tag for plain literals without explicit language or datatype.
 
 `language TAG`
+
+> [!NOTE]
+> The default `language` does not apply to [multi-line strings](#multi-line-strings) or [Markdown literals](#markdown-literals).
 
 See also: [example](../examples/language.md).
 
