@@ -249,7 +249,7 @@ Give a short local name to an IRI or CURIE; aliases propagate when files are inc
 
 `alias NAME IRI|CURIE`
 
-Multiple aliases may be given as a block.
+Multiple aliases may be given as a block using the `aliases` directive.
 
 ```
 aliases
@@ -273,7 +273,7 @@ Import triples, prefixes, base and aliases from another document before continui
 
 `include IRI`
 
-Multiple includes may be given as a block.
+Multiple includes may be given as a block using the `includes` directive.
 
 ```
 includes
@@ -300,7 +300,7 @@ Declare a namespace prefix.
 
 `prefix NAME IRI`
 
-Multiple prefixes may be given as a block.
+Multiple prefixes may be given as a block using the `prefixes` directive.
 
 ```
 prefixes
@@ -314,7 +314,7 @@ Optional advisory pointer to a SHACL shapes file which a parser may use to valid
 
 `shape IRI`
 
-Multiple shapes may be given as a block.
+Multiple shapes may be given as a block using the `shapes` directive.
 
 ```
 shapes
