@@ -29,15 +29,11 @@ Nettle (Nested Triple Trees Language) is a compact, human-friendly syntax for au
   - [Directives](#directives)
     - [Prologue directives](#prologue-directives)
       - [alias](#alias)
-      - [aliases](#aliases)
       - [base](#base)
       - [include](#include)
-      - [includes](#includes)
       - [language](#language)
       - [prefix](#prefix)
-      - [prefixes](#prefixes)
       - [shape](#shape)
-      - [shapes](#shapes)
     - [Resource directives](#resource-directives)
       - [@inverse](#inverse)
   - [Notes](#notes)
@@ -253,10 +249,6 @@ Give a short local name to an IRI or CURIE; aliases propagate when files are inc
 
 `alias NAME IRI|CURIE`
 
-See also: [include](#include); [example](../examples/alias.md).
-
-#### aliases
-
 Multiple aliases may be given as a block.
 
 ```
@@ -264,6 +256,8 @@ aliases
   NAME IRI
   NAME IRI
 ```
+
+See also: [include](#include); [example](../examples/alias.md).
 
 #### base
 
@@ -279,10 +273,6 @@ Import triples, prefixes, base and aliases from another document before continui
 
 `include IRI`
 
-See also: [example](../examples/include.md).
-
-#### includes
-
 Multiple includes may be given as a block.
 
 ```
@@ -290,6 +280,8 @@ includes
   IRI
   IRI
 ```
+
+See also: [example](../examples/include.md).
 
 #### language
 
@@ -308,8 +300,6 @@ Declare a namespace prefix.
 
 `prefix NAME IRI`
 
-#### prefixes
-
 Multiple prefixes may be given as a block.
 
 ```
@@ -323,8 +313,6 @@ prefixes
 Optional advisory pointer to a SHACL shapes file which a parser may use to validate the current document.
 
 `shape IRI`
-
-#### shapes
 
 Multiple shapes may be given as a block.
 
