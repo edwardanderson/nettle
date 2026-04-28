@@ -1,16 +1,17 @@
 ---
 author: Edward Anderson
 date: 2025-12-31
+modified: 2026-04-27
 ---
 
-# Nettle 0.1.0
+# Nettle 0.2.0
 
 > [!CAUTION]
 > Status: Draft
 
-Nettle (Nested Triple Trees Language) is a compact, human-friendly concrete syntax for RDF. It expresses triples as indented trees so that related resources may be visually grouped.
+Nettle (Nested Triple Trees Language) is a compact, human-friendly syntax for authoring RDF graphs. It expresses triples as whitespace-indented trees so that related resources may be visually grouped.
 
-- [Nettle 0.1.0](#nettle-010)
+- [Nettle 0.2.0](#nettle-020)
   - [Basics](#basics)
   - [Identifiers](#identifiers)
     - [Blank nodes](#blank-nodes)
@@ -19,9 +20,11 @@ Nettle (Nested Triple Trees Language) is a compact, human-friendly concrete synt
   - [Literals](#literals)
     - [Language-tagged strings](#language-tagged-strings)
     - [Datatyped strings](#datatyped-strings)
+    - [Multi-line strings](#multi-line-strings)
+    - [Markdown literals](#markdown-literals)
   - [Collections](#collections)
   - [Named graphs](#named-graphs)
-  - [Quoted triples](#quoted-triples)
+  - [Annotations](#annotations)
   - [Comments](#comments)
   - [Directives](#directives)
     - [Prologue directives](#prologue-directives)
@@ -30,7 +33,7 @@ Nettle (Nested Triple Trees Language) is a compact, human-friendly concrete synt
       - [include](#include)
       - [language](#language)
       - [prefix](#prefix)
-      - [shapes](#shapes)
+      - [shape](#shape)
     - [Resource directives](#resource-directives)
       - [@inverse](#inverse)
   - [Notes](#notes)
@@ -120,6 +123,8 @@ Literals must be wrapped in `"` quotation marks.
 
 Provide a BCP-47 tag to specify the language of the string. Language tags override the [default language](#language).
 
+`"{...}"@{...}`
+
 ```nettle
 http://example.org/mick
   http://xmlns.com/foaf/0.1/name
@@ -131,11 +136,45 @@ http://example.org/mick
 
 Specify the datatype of a literal with an IRI, CURIE or [alias](#alias).
 
+`"{...}" IRI|CURIE|{alias}`
+
 ```nettle
 http://example.org/mick
   https://schema.org/birthDate
     "1943-07-26" http://www.w3.org/2001/XMLSchema#date
 ```
+
+### Multi-line strings
+
+Preformatted text is enclosed by `"""` tokens.
+
+For triple-quoted literals, after indentation normalisation, the newline immediately following the opening delimiter and the newline immediately preceding the closing delimiter are discarded; all other characters are preserved
+
+```nettle
+http://example.org/app
+  https://schema.org/text
+    """
+    for i in range(3):
+      print(i)
+    """
+```
+
+> [!NOTE]
+> The default [language](#language) does not apply to multi-line strings. A language can still be set explicitly.
+
+See also: [example](../examples/pre.md).
+
+### Markdown literals
+
+Markdown may follow a `>` character. Markdown content is compiled to HTML and stored as an `rdf:HTML` literal.
+
+```nettle
+http://example.org/mick
+  https://schema.org/description
+    > **Sir Michael Philip Jagger** is an English musician, songwriter, and film producer.
+```
+
+See also: [example](../examples/markdown.md).
 
 ## Collections
 
@@ -169,9 +208,11 @@ g1 {
 
 See also: [identifiers](#identifiers), [blank nodes](#blank-nodes), [base](#base).
 
-## Quoted triples
+See also: [example](../examples/named-graph.md).
 
-Quoted triples (reified/annotated triples) are written between `<<` and `>>`.
+## Annotations
+
+Annotated triples (reified and asserted triples) are written between `<<` and `>>`. The leading `<<` may be preceded by an identifier or labelled blank node.
 
 ```nettle
 base http://example.org/
@@ -186,9 +227,11 @@ base http://example.org/
 ```
 
 > [!NOTE]
-> Reified triples are a feature of RDF 1.2 and may be ignored by parsers until that specification is finalised.
+> Triple terms and Annotations are features of RDF 1.2 and may be ignored by parsers targetting RDF 1.1.
 
 See also: [identifiers](#identifiers), [base](#base).
+
+See also: [example](../examples/annotation.md).
 
 ## Comments
 
@@ -206,6 +249,14 @@ Give a short local name to an IRI or CURIE; aliases propagate when files are inc
 
 `alias NAME IRI|CURIE`
 
+Multiple aliases may be given as a block using the `aliases` directive.
+
+```
+aliases
+  NAME IRI
+  NAME IRI
+```
+
 See also: [include](#include); [example](../examples/alias.md).
 
 #### base
@@ -222,6 +273,14 @@ Import triples, prefixes, base and aliases from another document before continui
 
 `include IRI`
 
+Multiple includes may be given as a block using the `includes` directive.
+
+```
+includes
+  IRI
+  IRI
+```
+
 See also: [example](../examples/include.md).
 
 #### language
@@ -229,6 +288,9 @@ See also: [example](../examples/include.md).
 Default language tag for plain literals without explicit language or datatype.
 
 `language TAG`
+
+> [!NOTE]
+> The default `language` does not apply to [multi-line strings](#multi-line-strings) or [Markdown literals](#markdown-literals).
 
 See also: [example](../examples/language.md).
 
@@ -238,11 +300,27 @@ Declare a namespace prefix.
 
 `prefix NAME IRI`
 
-#### shapes
+Multiple prefixes may be given as a block using the `prefixes` directive.
+
+```
+prefixes
+  NAME IRI
+  NAME IRI
+```
+
+#### shape
 
 Optional advisory pointer to a SHACL shapes file which a parser may use to validate the current document.
 
-`shapes IRI`
+`shape IRI`
+
+Multiple shapes may be given as a block using the `shapes` directive.
+
+```
+shapes
+  IRI
+  IRI
+```
 
 ### Resource directives
 

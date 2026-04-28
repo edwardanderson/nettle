@@ -1,1 +1,1 @@
-This directory contains example Nettle files used to illustrate syntax and to form the basis of a [go-testmark](https://github.com/warpfork/go-testmark) integration test-suite against canonical graphs expressed in Turtle or TriG.
+This directory contains example Nettle snippets used to illustrate syntax and to form the basis of a [go-testmark](https://github.com/warpfork/go-testmark) integration test-suite against canonical graphs expressed in Turtle or TriG.
